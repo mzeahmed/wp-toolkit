@@ -1,0 +1,19 @@
+{
+    "name": "mzeahmed/wp-helper-lib",
+    "description": "A PHP library with useful functions for WordPress.",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Mze Ahmed",
+            "email": "houdjiva@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "WpHelperLib\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.3"
+    }
+}
