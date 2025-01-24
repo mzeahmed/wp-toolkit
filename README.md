@@ -1,6 +1,6 @@
-# WP Helpers
+# WP ToolKit
 
-**WP Helpers** is a PHP library that simplifies WordPress development by providing reusable classes to handle common operations :
+**WP ToolKit** is a PHP library that simplifies WordPress development by providing reusable classes to handle common operations :
 
 - AJAX requests
 - Database operations
@@ -38,7 +38,7 @@ The `Ajax` utility class simplifies working with AJAX in WordPress by providing 
 #### 1. Register an AJAX Action
 
 ```php
-use MzeAhmed\WpHelpers\Utils\Ajax;
+use MzeAhmed\WpToolKit\Utils\Ajax;
 
 Ajax::register('my_action', 'my_callback');
 
@@ -88,7 +88,7 @@ Create a repository class that extends the `AbstractRepository` class. For examp
 ```php
 namespace YourNamespace\Repositories;
 
-use Mzeahmed\WpHelpers\Database\AbstractRepository;
+use Mzeahmed\WpToolKit\Database\AbstractRepository;
 
 class YourCustomRepository extends AbstractRepository
 {
@@ -163,7 +163,7 @@ The `UserActivityMonitor` class helps track user activity and determine online/o
 #### 1. Update User Activity
 
 ```php
-use MzeAhmed\WpHelpers\UserActivityMonitor;
+use MzeAhmed\WpToolKit\UserActivityMonitor;
 
 $monitor = new UserActivityMonitor();
 $monitor->updateStatus($userId);
