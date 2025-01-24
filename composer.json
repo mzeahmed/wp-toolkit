@@ -1,5 +1,5 @@
 {
-    "name": "mzeahmed/wp-helper-lib",
+    "name": "mzeahmed/wp-helpers",
     "description": "A PHP library with useful functions for WordPress.",
     "type": "library",
     "authors": [
@@ -10,7 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "WpHelperLib\\": "src/"
+            "MzeAhmed\\WpHelpers\\": "src/"
         }
     },
     "require": {

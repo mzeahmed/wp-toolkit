@@ -1,1 +1,1 @@
-# wp-helper-lib
+# wp-helpers
