@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MzeAhmed\WpHelpers;
+namespace MzeAhmed\WpHelpers\Utils;
 
 /**
  * Utility class for handling AJAX requests in WordPress.
