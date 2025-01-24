@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MzeAhmed\WpHelpers;
+namespace MzeAhmed\WpToolKit;
 
 /**
  * This class handles the sending of Server-Sent Events (SSE).

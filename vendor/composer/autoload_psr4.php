@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'MzeAhmed\\WpHelpers\\' => array($baseDir . '/src'),
+    'MzeAhmed\\WpToolKit\\' => array($baseDir . '/src'),
 );

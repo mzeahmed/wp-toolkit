@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MzeAhmed\WpHelpers\Traits;
+namespace MzeAhmed\WpToolKit\Traits;
 
 /**
  * This trait implements the Singleton design pattern, which ensures that a class can only have one instance

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MzeAhmed\WpHelpers\Traits;
+namespace MzeAhmed\WpToolKit\Traits;
 
 /**
  * This trait provides methods to determine the type of the current request in WordPress.

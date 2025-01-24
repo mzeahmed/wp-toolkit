@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MzeAhmed\WpHelpers\Database;
+namespace MzeAhmed\WpToolKit\Database;
 
 abstract class AbstractRepository
 {

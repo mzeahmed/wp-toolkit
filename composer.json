@@ -10,7 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "MzeAhmed\\WpHelpers\\": "src/"
+            "MzeAhmed\\WpToolKit\\": "src/"
         }
     },
     "require": {
