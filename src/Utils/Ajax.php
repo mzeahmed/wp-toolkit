@@ -31,8 +31,6 @@ class Ajax
      */
     private const int HTTP_NOT_FOUND = 404;
 
-    private const string SECURITY_NONCE = 'security_nonce';
-
     /**
      * Registers a new AJAX action.
      *
@@ -133,11 +131,19 @@ class Ajax
         $nonceAction = $action;
 
         if (null === $field || null === $action) {
+            if (!defined('AJAX_SECURITY_NONCE')) {
+                self::sendJsonError('The constant AJAX_SECURITY_NONCE is not defined');
+            }
+
+            if (!defined('AJAX_SECURITY_NONCE')) {
+                self::sendJsonError('The constant AJAX_SECURITY_NONCE is not defined');
+            }
+
             /**
              * the security_nonce_action needs to be declared in the application with wp_create_nonce('security_nonce_action');
              */
-            $nonce = isset($_POST[self::SECURITY_NONCE]) ? sanitize_text_field($_POST[self::SECURITY_NONCE]) : '';
-            $nonceAction = is_user_logged_in() ? 'ys_user_' . get_current_user_id() . '_ajax_security_nonce_action' : 'ys_guest_ajax_security_nonce_action';
+            $nonce = isset($_POST[AJAX_SECURITY_NONCE]) ? sanitize_text_field($_POST[AJAX_SECURITY_NONCE]) : '';
+            $nonceAction = AJAX_SECURITY_NONCE_ACTION;
         }
 
         if (empty($nonce)) {
