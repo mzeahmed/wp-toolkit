@@ -135,8 +135,8 @@ class Ajax
                 self::sendJsonError('The constant AJAX_SECURITY_NONCE is not defined');
             }
 
-            if (!defined('AJAX_SECURITY_NONCE')) {
-                self::sendJsonError('The constant AJAX_SECURITY_NONCE is not defined');
+            if (!defined('AJAX_SECURITY_NONCE_ACTION')) {
+                self::sendJsonError('The constant AJAX_SECURITY_NONCE_ACTION is not defined');
             }
 
             /**

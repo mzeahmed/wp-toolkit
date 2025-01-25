@@ -70,6 +70,37 @@ Verify nonces to ensure that AJAX requests are secure:
 Ajax::verifyNonce('nonce_field_name', 'action_name');
 ```
 
+Need to define theses constants in the application: `AJAX_SECURITY_NONCE_ACTION` and `AJAX_SECURITY_NONCE`.
+
+```php
+define('AJAX_SECURITY_NONCE_ACTION', 'my_action');
+define('AJAX_SECURITY_NONCE', 'nonce_field_name');
+```
+And use wp_localize_script to pass the nonce to the client side.
+
+```php
+wp_localize_script('your-script-handle', 'ajax_object', [
+    'ajax_url' => admin_url('admin-ajax.php'),
+    AJAX_SECURITY_NONCE => wp_create_nonce(AJAX_SECURITY_NONCE_ACTION),
+]);
+```
+
+In the client side, you can use the nonce like this:
+
+```javascript
+fetch(ajax_object.ajax_url, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-WP-Nonce': ajax_object.nonce_field_name
+    },
+    body: new URLSearchParams({
+        action: 'my_action',
+        data: 'value'
+    })
+})
+```
+
 ## Database Operations
 
 - **Abstract Repository:** Base class for implementing the repository pattern with `$wpdb`.
@@ -78,6 +109,8 @@ Ajax::verifyNonce('nonce_field_name', 'action_name');
 - **Transaction Management:** Start, commit, and rollback database transactions.
 - **Error Logging:** Automatically log and debug database errors.
 - **Dynamic Query Building:** Flexible support for building dynamic `WHERE` and `JOIN` clauses.
+
+On the first usage, a new database table `wp_change_logs` will be created, which will be used to log insert, update, and delete operations used in the `AbstractRepository` class.
 
 ### Usage
 
