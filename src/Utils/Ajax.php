@@ -31,8 +31,6 @@ class Ajax
      */
     private const int HTTP_NOT_FOUND = 404;
 
-    private const string SECURITY_NONCE_ACTION = 'security_nonce_action';
-
     private const string SECURITY_NONCE = 'security_nonce';
 
     /**
@@ -136,10 +134,10 @@ class Ajax
 
         if (null === $field || null === $action) {
             /**
-             * the security_nonce needs to be declared in the application with wp_nonce_field('security_nonce_action', 'security_nonce');
+             * the security_nonce_action needs to be declared in the application with wp_create_nonce('security_nonce_action');
              */
             $nonce = isset($_POST[self::SECURITY_NONCE]) ? sanitize_text_field($_POST[self::SECURITY_NONCE]) : '';
-            $nonceAction = self::SECURITY_NONCE_ACTION;
+            $nonceAction = is_user_logged_in() ? 'ys_user_' . get_current_user_id() . '_ajax_security_nonce_action' : 'ys_guest_ajax_security_nonce_action';
         }
 
         if (empty($nonce)) {
