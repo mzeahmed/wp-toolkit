@@ -11,7 +11,7 @@ namespace MzeAhmed\WpToolKit;
  * and sending data via SSE to the client. This class is currently used
  * for managing SSE in the project.
  */
-class ServerSentEvents
+class EventStreamHandler
 {
     /**
      * @var array $listeners Associative array containing listeners for different events.

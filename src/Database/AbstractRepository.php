@@ -602,6 +602,13 @@ abstract class AbstractRepository
         $charsetCollate = $this->wpdb->get_charset_collate();
         $logTable = $this->dbPrefix . 'change_logs';
 
+        // verifier si la table existe déjà
+        $table = $this->wpdb->get_var("SHOW TABLES LIKE '{$logTable}'");
+
+        if ($this->wpdb->get_var("SHOW TABLES LIKE '{$logTable}'") === $logTable) {
+            return;
+        }
+
         $sql = "CREATE TABLE IF NOT EXISTS {$logTable} (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
             table_name VARCHAR(255) NOT NULL,
@@ -615,9 +622,7 @@ abstract class AbstractRepository
             index created_at_index (created_at)
         ) {$charsetCollate}";
 
-        // $this->wpdb->query($sql);
-        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-        dbDelta($sql);
+        $this->wpdb->query($sql);
     }
 
     /**
