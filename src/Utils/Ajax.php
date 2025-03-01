@@ -40,10 +40,33 @@ class Ajax
      * @param string $action The name of the AJAX action to register.
      * @param callable $callback The callback function to execute when the AJAX action is triggered.
      * @param bool $private Whether the action is private (default: true) or public.
+     * 
+     * @deprecated version 1.0.5.6 use addAction instead, the name is more descriptive
      *
      * @return void
      */
     public static function registerAction(string $action, callable $callback, bool $private = true): void
+    {
+        if ($private) {
+            add_action('wp_ajax_' . sanitize_key($action), $callback);
+        } else {
+            add_action('wp_ajax_nopriv_' . sanitize_key($action), $callback);
+        }
+    }
+
+    /**
+     * Registers a new AJAX action.
+     * 
+     * This method registers an AJAX action in WordPress using the `add_action()` function.
+     * It supports both private (authenticated users only) and public (accessible to all users) actions.
+     *
+     * @param string $action The name of the AJAX action to register.
+     * @param callable $callback The callback function to execute when the AJAX action is triggered.
+     * @param bool $private Whether the action is private (default: true) or public.
+     * 
+     * @return void
+     */
+    public static function addAction(string $action, callable $callback, bool $private = true): void
     {
         if ($private) {
             add_action('wp_ajax_' . sanitize_key($action), $callback);
