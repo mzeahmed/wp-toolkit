@@ -14,22 +14,22 @@ class Ajax
     /**
      * HTTP code for a successful response (200 OK).
      */
-    private const int HTTP_OK = 200;
+    private const HTTP_OK = 200;
 
     /**
      * HTTP code for a bad request (400 Bad Request).
      */
-    private const int HTTP_BAD_REQUEST = 400;
+    private const HTTP_BAD_REQUEST = 400;
 
     /**
      * HTTP code for an unauthorized request (401 Unauthorized).
      */
-    private const int HTTP_UNAUTHORIZED = 401;
+    private const HTTP_UNAUTHORIZED = 401;
 
     /**
      * HTTP code for a resource not found (404 Not Found).
      */
-    private const int HTTP_NOT_FOUND = 404;
+    private const HTTP_NOT_FOUND = 404;
 
     /**
      * Registers a new AJAX action.
@@ -40,10 +40,10 @@ class Ajax
      * @param string $action The name of the AJAX action to register.
      * @param callable $callback The callback function to execute when the AJAX action is triggered.
      * @param bool $private Whether the action is private (default: true) or public.
-     * 
-     * @deprecated version 1.0.5.6 use addAction instead, the name is more descriptive
      *
      * @return void
+     * @deprecated version 1.0.5.6 use addAction instead, the name is more descriptive
+     *
      */
     public static function registerAction(string $action, callable $callback, bool $private = true): void
     {
@@ -56,14 +56,14 @@ class Ajax
 
     /**
      * Registers a new AJAX action.
-     * 
+     *
      * This method registers an AJAX action in WordPress using the `add_action()` function.
      * It supports both private (authenticated users only) and public (accessible to all users) actions.
      *
      * @param string $action The name of the AJAX action to register.
      * @param callable $callback The callback function to execute when the AJAX action is triggered.
      * @param bool $private Whether the action is private (default: true) or public.
-     * 
+     *
      * @return void
      */
     public static function addAction(string $action, callable $callback, bool $private = true): void
