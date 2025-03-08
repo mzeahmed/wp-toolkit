@@ -17,7 +17,7 @@ class UserActivityMonitor
      *
      * @var int
      */
-    private const int ONLINE_STATUS_MARGIN = 10 * MINUTE_IN_SECONDS;
+    private const ONLINE_STATUS_MARGIN = 10 * MINUTE_IN_SECONDS;
 
     /**
      * The duration in seconds for which the transient is stored.
@@ -25,7 +25,7 @@ class UserActivityMonitor
      *
      * @var int
      */
-    private const int TRANSIENT_SELF_CLEAR = DAY_IN_SECONDS;
+    private const TRANSIENT_SELF_CLEAR = DAY_IN_SECONDS;
 
     /**
      * Sets and updates the transient that monitors user activity (`_user_online_status_transient`).
