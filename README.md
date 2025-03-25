@@ -233,3 +233,83 @@ foreach ($recentlyOfflineUsers as $user) {
     echo "User $user->ID recently went offline.";
 }
 ```
+
+## 🔒 Data Sanitization
+
+The `Sanitizer` class provides static methods to clean user input and ensure data safety in WordPress environments.
+
+### Features
+
+- ✅ Sanitize strings, emails, URLs, and textarea contents
+- 🔁 Sanitize arrays and nested arrays
+- 🎯 Apply custom sanitization rules per field
+
+### Supported Rules
+
+| Rule      | Description                        |
+|-----------|------------------------------------|
+| `text`    | Uses `sanitize_text_field()`       |
+| `email`   | Uses `sanitize_email()`            |
+| `url`     | Uses `esc_url_raw()`               |
+| `textarea`| Uses `sanitize_textarea_field()`   |
+
+### Usage
+
+#### 1. Sanitize a single value or array
+
+```php
+use MzeAhmed\WpToolKit\Utils\Sanitizer;
+
+$cleanText = Sanitizer::text(' John ');
+// returns 'John'
+
+$cleanEmailArray = Sanitizer::email(['  a@a.com ', 'b@b.com ']);
+// returns ['a@a.com', 'b@b.com']
+```
+
+### 2. Recursively sanitize text values in nested arrays
+
+```php
+$dirtyArray = [
+    'name' => ' John ',
+     'meta' => [
+        'city' => ' Paris ',
+        'desc' => " Hello\nWorld "
+    ]
+];
+
+$clean = Sanitizer::recursiveText($raw);
+// returns [
+//   'name' => 'John',
+//   'meta' => [
+//     'city' => 'Paris',
+//     'desc' => "Hello\nWorld"
+//   ]
+// ]
+```
+
+### 3. Apply custom sanitization rules
+
+```php
+$data = [
+    'name' => ' John Doe ',
+    'email' => ' john@example.com ',
+    'website' => ' https://example.com ',
+    'bio' => " Hello\nI'm John "
+];
+
+$rules = [
+    'name' => 'text',
+    'email' => 'email',
+    'website' => 'url',
+    'bio' => 'textarea'
+];
+
+$cleaned = Sanitizer::byRules($data, $rules);
+// returns [
+//   'name' => 'John Doe',
+//   'email' => 'john@example.com',
+//   'website' => 'https://example.com',
+//   'bio' => "Hello\nI'm John"
+// ]
+```
