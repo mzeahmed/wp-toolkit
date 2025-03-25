@@ -46,4 +46,14 @@ class Utils
 
         return $files;
     }
+
+    /**
+     * Check if the current environment is development.
+     *
+     * @return bool
+     */
+    public static function isDevEnvironment(): bool
+    {
+        return \defined('WP_ENV') && 'development' === WP_ENV;
+    }
 }
