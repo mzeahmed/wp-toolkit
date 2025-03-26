@@ -21,6 +21,8 @@ require_once 'vendor/autoload.php';
 1. [AJAX Requests](#ajax-requests)
 2. [Database Operations](#database-operations)
 3. [User Activity Monitoring](#user-activity-monitoring)
+4. [Data Sanitization](#data-sanitization)
+5[HTTP Client](#http-client)
 
 ## Ajax Requests
 
@@ -234,7 +236,7 @@ foreach ($recentlyOfflineUsers as $user) {
 }
 ```
 
-## 🔒 Data Sanitization
+## Data Sanitization
 
 The `Sanitizer` class provides static methods to clean user input and ensure data safety in WordPress environments.
 
@@ -313,3 +315,70 @@ $cleaned = Sanitizer::byRules($data, $rules);
 //   'bio' => "Hello\nI'm John"
 // ]
 ```
+
+## HTTP Client
+
+The `HttpClient` class simplifies making HTTP requests in WordPress using `wp_remote_*` functions. It supports GET, POST, PUT, DELETE (and PATCH) and automatically decodes JSON responses.
+
+### Features
+
+- Perform requests with `wp_remote_get`, `wp_remote_post`, etc.
+- Supports safe URLs with `reject_unsafe_urls`
+- Automatically decodes JSON response bodies
+- Unified interface for REST APIs
+
+### Usage
+
+#### 1. Initialize the client
+
+```php
+use MzeAhmed\WpToolKit\Http\HttpClient;
+
+$client = new HttpClient();
+```
+
+#### 2. Make a GET request
+
+```php
+$response = $client->get('https://jsonplaceholder.typicode.com/posts');
+
+if (is_wp_error($response)) {
+    error_log($response->get_error_message());
+} else {
+    var_dump($response); // array of posts
+}
+```
+
+#### 3. Make a POST request
+
+```php
+$response = $client->post('https://example.com/api/data', [
+    'name' => 'John',
+    'email' => 'john@example.com'
+]);
+```
+
+### 4. Use safe mode (rejects unsafe URLs)
+
+```php
+$response = $client->get('http://example.com', [], true); // safe mode enabled
+```
+
+## 📖 API Reference
+
+### `MzeAhmed\WpToolKit\Http\HttpClient`
+
+| Method     | Description                                 | Return Type        |
+|------------|---------------------------------------------|--------------------|
+| `get()`    | Perform an HTTP GET request                 | `array|\WP_Error`  |
+| `post()`   | Perform an HTTP POST request                | `array|\WP_Error`  |
+| `put()`    | Perform an HTTP PUT request                 | `array|\WP_Error`  |
+| `delete()` | Perform an HTTP DELETE request              | `array|\WP_Error`  |
+
+- All methods accept:
+    - `$url` *(string)* – The endpoint to query
+    - `$args` *(array)* – Optional arguments (headers, timeout, etc.)
+    - `$safe` *(bool)* – Enable WordPress URL validation with `reject_unsafe_urls`
+
+> Automatically decodes the JSON response body with `json_decode(..., JSON_THROW_ON_ERROR)`.
+
