@@ -49,7 +49,7 @@ class HttpClient
 
         $response = wp_remote_retrieve_body($request);
 
-        return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        return $this->decode($response);
     }
 
     /**
@@ -77,7 +77,7 @@ class HttpClient
 
         $response = wp_remote_retrieve_body($request);
 
-        return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        return $this->decode($response); 
     }
 
     /**
@@ -106,7 +106,7 @@ class HttpClient
 
         $response = wp_remote_retrieve_body($request);
 
-        return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        return $this->decode($response); 
     }
 
     /**
@@ -134,6 +134,29 @@ class HttpClient
 
         $response = wp_remote_retrieve_body($request);
 
-        return json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        return $this->decode($response);
+    }
+
+    /**
+     * Perform decoding of JSON response.
+     *
+     * @param  string  $json The json string to decode.
+     * @param  boolean $assoc Whether to return an associative array.
+     * 
+     * @return array 
+     */
+    private function decode(string $json, bool $assoc = true): array
+    {
+        if (!json_validate($json)) {
+            return [];
+        }
+
+        $res = json_decode($json, $assoc, 512, JSON_THROW_ON_ERROR);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return [];
+        }
+
+        return $res;
     }
 }
