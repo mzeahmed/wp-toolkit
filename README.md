@@ -112,8 +112,6 @@ fetch(ajax_object.ajax_url, {
 - **Error Logging:** Automatically log and debug database errors.
 - **Dynamic Query Building:** Flexible support for building dynamic `WHERE` and `JOIN` clauses.
 
-On the first usage, a new database table `wp_change_logs` will be created, which will be used to log insert, update, and delete operations used in the `AbstractRepository` class.
-
 ### Usage
 
 #### 1. Implement a Repository
