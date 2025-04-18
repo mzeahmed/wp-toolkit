@@ -1,3 +1,7 @@
+### [1.0.10] - 2025-04-18
+### ✨ Added
+- Modify `AbstractRepository` class to add a new column in `change_logs` table
+
 ### [1.0.9] - 2025-04-10
 ### ✨ Improve
 - Perform the `HttpClient` json_decode
