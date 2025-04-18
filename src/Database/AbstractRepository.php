@@ -21,19 +21,12 @@ abstract class AbstractRepository
      */
     protected string $tableName;
 
-    /**
-     * @var string Schema version
-     */
-    protected const SCHEMA_VERSION = '1.0.2';
-
     public function __construct()
     {
         global $wpdb;
 
         $this->wpdb = $wpdb;
         $this->dbPrefix = $this->wpdb->prefix;
-
-        $this->maybeUpgradeSchema();
     }
 
     /**
@@ -189,8 +182,6 @@ abstract class AbstractRepository
             return false;
         }
 
-        $this->logChange('insert', $datas);
-
         return $this->wpdb->insert_id;
     }
 
@@ -206,13 +197,7 @@ abstract class AbstractRepository
      */
     public function update(array $datas, array $where, array $formatData = null, array $formatWhere = null): int|false
     {
-        $updated = $this->wpdb->update($this->tableName, $datas, $where, $formatData, $formatWhere);
-
-        if ($updated) {
-            $this->logChange('update', $datas);
-        }
-
-        return $updated;
+        return $this->wpdb->update($this->tableName, $datas, $where, $formatData, $formatWhere);
     }
 
     /**
@@ -224,13 +209,7 @@ abstract class AbstractRepository
      */
     public function delete(array $where, array $whereFormat = null): int|false
     {
-        $deleted = $this->wpdb->delete($this->tableName, $where, $whereFormat);
-
-        if ($deleted) {
-            $this->logChange('delete');
-        }
-
-        return $deleted;
+        return $this->wpdb->delete($this->tableName, $where, $whereFormat);
     }
 
     /**
@@ -548,28 +527,6 @@ abstract class AbstractRepository
     }
 
     /**
-     * Logs changes made to the table.
-     *
-     * @param string $action The action performed (e.g., 'insert', 'update', 'delete').
-     * @param array $data The data associated with the action.
-     *
-     * @return bool True on success, false on failure.
-     */
-    public function logChange(string $action, array $data = []): bool
-    {
-        $logTable = $this->dbPrefix . 'change_logs';
-        $entry = [
-            'table_name' => $this->tableName,
-            'action' => $action,
-            'user_id' => get_current_user_id(),
-            'data' => !(empty($data)) ? json_encode($data) : null,
-            'created_at' => current_time('mysql'),
-        ];
-
-        return (bool)$this->wpdb->insert($logTable, $entry);
-    }
-
-    /**
      * Creates an index on the table.
      *
      * @param string $indexName The name of the index.
@@ -595,58 +552,6 @@ abstract class AbstractRepository
     {
         $query = "DROP INDEX {$indexName} ON {$this->tableName}";
         return (bool)$this->wpdb->query($query);
-    }
-
-    /**
-     * Upgrades the database schema if necessary.
-     *
-     * @return void
-     */
-    protected function maybeUpgradeSchema(): void
-    {
-        $currentVersion = $this->getCurrentDbVersion();
-
-        if (version_compare($currentVersion, self::SCHEMA_VERSION, '<')) {
-            $this->createChangeLogTable();
-
-            if (version_compare($currentVersion, '1.0.2', '<')) {
-                $this->addChangeLogsTableObjectIdColumn();
-            }
-
-            $this->updateDbVersion();
-        }
-    }
-
-    /**
-     * Creates a log table to track changes made in a table.
-     *
-     * @return void True on success, false on failure.
-     */
-    protected function createChangeLogTable(): void
-    {
-        $charsetCollate = $this->wpdb->get_charset_collate();
-        $logTable = $this->dbPrefix . 'change_logs';
-
-        // $table = $this->wpdb->get_var("SHOW TABLES LIKE '{$logTable}'");
-        //
-        // if ($table && ($table === $logTable)) {
-        //     return;
-        // }
-
-        $sql = "CREATE TABLE IF NOT EXISTS {$logTable} (
-            id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            table_name VARCHAR(255) NOT NULL,
-            action VARCHAR(255) NOT NULL,
-            user_id BIGINT(20) UNSIGNED NOT NULL,
-            data LONGTEXT DEFAULT NULL,
-            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            index table_name_index (table_name),
-            index action_index (action),
-            index user_id_index (user_id),
-            index created_at_index (created_at)
-        ) {$charsetCollate}";
-
-        $this->wpdb->query($sql);
     }
 
     /**
@@ -945,40 +850,5 @@ abstract class AbstractRepository
                 error_log($log);
             }
         }
-    }
-
-    private function addChangeLogsTableObjectIdColumn(): void
-    {
-        // $queryExists = "
-        //     SHOW COLUMNS FROM {$this->dbPrefix}change_logs LIKE 'object_id'
-        // ";
-        //
-        // $result = $this->wpdb->get_var($queryExists);
-        //
-        // if (null !== $result) {
-        //     return;
-        // }
-
-        $query = "
-            ALTER TABLE {$this->dbPrefix}change_logs
-            ADD COLUMN object_id BIGINT(20) UNSIGNED DEFAULT NULL AFTER table_name;
-        ";
-
-        $query .= "
-            ALTER TABLE {$this->dbPrefix}change_logs
-            ADD INDEX object_id_index (object_id);
-        ";
-
-        $this->wpdb->query($query);
-    }
-
-    private function getCurrentDbVersion(): int
-    {
-        return (int) get_option('_change_logs_version', '0.0.0');
-    }
-
-    private function updateDbVersion(): void
-    {
-        update_option('_change_logs_version', self::SCHEMA_VERSION);
     }
 }
