@@ -29,6 +29,7 @@ abstract class AbstractRepository
         $this->dbPrefix = $this->wpdb->prefix;
 
         $this->createChangeLogTable();
+        $this->addChangeLogsTableObjectIdColumn();
     }
 
     /**
@@ -602,10 +603,9 @@ abstract class AbstractRepository
         $charsetCollate = $this->wpdb->get_charset_collate();
         $logTable = $this->dbPrefix . 'change_logs';
 
-        // verifier si la table existe déjà
         $table = $this->wpdb->get_var("SHOW TABLES LIKE '{$logTable}'");
 
-        if ($this->wpdb->get_var("SHOW TABLES LIKE '{$logTable}'") === $logTable) {
+        if ($table && ($table === $logTable)) {
             return;
         }
 
@@ -921,5 +921,30 @@ abstract class AbstractRepository
                 error_log($log);
             }
         }
+    }
+
+    private function addChangeLogsTableObjectIdColumn(): void
+    {
+        $queryExists = "
+            SHOW COLUMNS FROM {$this->dbPrefix}change_logs LIKE 'object_id'
+        ";
+
+        $result = $this->wpdb->get_var($queryExists);
+
+        if (null !== $result) {
+            return;
+        }
+
+        $query = "
+            ALTER TABLE {$this->dbPrefix}change_logs
+            ADD COLUMN object_id BIGINT(20) AFTER table_name UNSIGNED DEFAULT NULL;
+        ";
+
+        $query .= "
+            ALTER TABLE {$this->dbPrefix}change_logs
+            ADD INDEX object_id_index (object_id);
+        ";
+
+        $this->wpdb->query($query);
     }
 }
