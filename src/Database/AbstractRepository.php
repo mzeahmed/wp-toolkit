@@ -21,6 +21,11 @@ abstract class AbstractRepository
      */
     protected string $tableName;
 
+    /**
+     * @var string Schema version
+     */
+    protected const SCHEMA_VERSION = '1.0.2';
+
     public function __construct()
     {
         global $wpdb;
@@ -28,8 +33,7 @@ abstract class AbstractRepository
         $this->wpdb = $wpdb;
         $this->dbPrefix = $this->wpdb->prefix;
 
-        $this->createChangeLogTable();
-        $this->addChangeLogsTableObjectIdColumn();
+        $this->maybeUpgradeSchema();
     }
 
     /**
@@ -594,6 +598,26 @@ abstract class AbstractRepository
     }
 
     /**
+     * Upgrades the database schema if necessary.
+     *
+     * @return void
+     */
+    protected function maybeUpgradeSchema(): void
+    {
+        $currentVersion = $this->getCurrentDbVersion();
+
+        if (version_compare($currentVersion, self::SCHEMA_VERSION, '<')) {
+            $this->createChangeLogTable();
+
+            if (version_compare($currentVersion, '1.0.2', '<')) {
+                $this->addChangeLogsTableObjectIdColumn();
+            }
+
+            $this->updateDbVersion();
+        }
+    }
+
+    /**
      * Creates a log table to track changes made in a table.
      *
      * @return void True on success, false on failure.
@@ -603,11 +627,11 @@ abstract class AbstractRepository
         $charsetCollate = $this->wpdb->get_charset_collate();
         $logTable = $this->dbPrefix . 'change_logs';
 
-        $table = $this->wpdb->get_var("SHOW TABLES LIKE '{$logTable}'");
-
-        if ($table && ($table === $logTable)) {
-            return;
-        }
+        // $table = $this->wpdb->get_var("SHOW TABLES LIKE '{$logTable}'");
+        //
+        // if ($table && ($table === $logTable)) {
+        //     return;
+        // }
 
         $sql = "CREATE TABLE IF NOT EXISTS {$logTable} (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -925,19 +949,19 @@ abstract class AbstractRepository
 
     private function addChangeLogsTableObjectIdColumn(): void
     {
-        $queryExists = "
-            SHOW COLUMNS FROM {$this->dbPrefix}change_logs LIKE 'object_id'
-        ";
-
-        $result = $this->wpdb->get_var($queryExists);
-
-        if (null !== $result) {
-            return;
-        }
+        // $queryExists = "
+        //     SHOW COLUMNS FROM {$this->dbPrefix}change_logs LIKE 'object_id'
+        // ";
+        //
+        // $result = $this->wpdb->get_var($queryExists);
+        //
+        // if (null !== $result) {
+        //     return;
+        // }
 
         $query = "
             ALTER TABLE {$this->dbPrefix}change_logs
-            ADD COLUMN object_id BIGINT(20) AFTER table_name UNSIGNED DEFAULT NULL;
+            ADD COLUMN object_id BIGINT(20) UNSIGNED DEFAULT NULL AFTER table_name;
         ";
 
         $query .= "
@@ -946,5 +970,15 @@ abstract class AbstractRepository
         ";
 
         $this->wpdb->query($query);
+    }
+
+    private function getCurrentDbVersion(): int
+    {
+        return (int) get_option('_change_logs_version', '0.0.0');
+    }
+
+    private function updateDbVersion(): void
+    {
+        update_option('_change_logs_version', self::SCHEMA_VERSION);
     }
 }
