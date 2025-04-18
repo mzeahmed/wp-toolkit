@@ -1,3 +1,8 @@
+### [1.0.11] - 2025-04-19
+#### ✨ Added
+- Introduced schema versioning system (`yoostart_change_logs_version`) to `AbstractRepository`
+- Automatically upgrades `change_logs` table by adding `object_id` column if not present
+
 ### [1.0.10] - 2025-04-18
 ### ✨ Added
 - Modify `AbstractRepository` class to add a new column in `change_logs` table
