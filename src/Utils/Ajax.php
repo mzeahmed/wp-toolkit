@@ -109,7 +109,7 @@ class Ajax
     public static function sendJsonError(
         string $message,
         array $data = [],
-        int $statusCode = self::HTTP_BAD_REQUEST
+        int $statusCode = null
     ): void {
         self::logAjaxError($message);
         $data['error'] = !empty($message) ? $message : 'An error occurred';
