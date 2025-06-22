@@ -1,4 +1,8 @@
 
+### [1.0.13] - 2025-06-23
+### ✨ Fix
+- Fix response code in `Ajax::sendJsonError` method to use `null` as the default value.
+
 ### [1.0.9] - 2025-04-10
 ### ✨ Improve
 - Perform the `HttpClient` json_decode
