@@ -179,6 +179,38 @@ class Ajax
     }
 
     /**
+     * Guards AJAX requests by performing authentication and nonce validation.
+     *
+     * This method provides a convenient way to secure AJAX endpoints by combining
+     * user authentication and nonce verification checks. It can be called at the
+     * beginning of AJAX handlers to ensure the request is authorized and legitimate.
+     *
+     * If authentication fails, it sends a 401 Unauthorized JSON error response.
+     * If nonce verification fails, it delegates to verifyNonce() which also sends
+     * an appropriate error response.
+     *
+     * @param bool $checkLoggedIn Whether to verify that the user is authenticated (default: true).
+     *                            If true and user is not logged in, sends a 401 error response.
+     * @param bool $checkNonce Whether to verify the request nonce (default: true).
+     *                         If true, calls verifyNonce() to validate the AJAX security nonce.
+     *
+     * @return void This method terminates execution by sending a JSON error if validation fails.
+     *
+     * @see verifyNonce() for nonce validation logic
+     * @see sendJsonError() for error response format
+     */
+    public static function guard(bool $checkLoggedIn = true, bool $checkNonce = true): void
+    {
+        if ($checkLoggedIn && !is_user_logged_in()) {
+            self::sendJsonError('Unauthorized request', [], self::HTTP_UNAUTHORIZED);
+        }
+
+        if ($checkNonce) {
+            self::verifyNonce();
+        }
+    }
+
+    /**
      * Logs an error message to the PHP error log.
      *
      * This method logs an error message to the PHP error log if WP_DEBUG is enabled.
@@ -191,6 +223,21 @@ class Ajax
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('[AJAX ERROR] ' . $message);
+        }
+    }
+
+    /**
+     * Asserts a condition and sends a JSON error response if the condition is false.
+     *
+     * @param bool $cond
+     * @param string $msg
+     *
+     * @return void
+     */
+    public static function assert(bool $cond, string $msg): void
+    {
+        if (!$cond) {
+            self::sendJsonError($msg);
         }
     }
 }

@@ -1,3 +1,7 @@
+### [1.0.14] - 2025-10-05
+#### ✨ Added
+- `Ajax::assert()` — utility method to check a condition and send a JSON error response if the condition is false.
+- `Ajax::guard()` — guard method for protecting AJAX requests.
 
 ### [1.0.13] - 2025-06-23
 ### ✨ Fix
