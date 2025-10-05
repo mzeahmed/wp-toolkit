@@ -189,6 +189,8 @@ class Ajax
      * If nonce verification fails, it delegates to verifyNonce() which also sends
      * an appropriate error response.
      *
+     * @param string|null $action The AJAX action name for contextual error messages (optional).
+     *                            If provided, it will be included in error messages for debugging.
      * @param bool $checkLoggedIn Whether to verify that the user is authenticated (default: true).
      *                            If true and user is not logged in, sends a 401 error response.
      * @param bool $checkNonce Whether to verify the request nonce (default: true).
@@ -199,10 +201,13 @@ class Ajax
      * @see verifyNonce() for nonce validation logic
      * @see sendJsonError() for error response format
      */
-    public static function guard(bool $checkLoggedIn = true, bool $checkNonce = true): void
+    public static function guard(?string $action = null, bool $checkLoggedIn = true, bool $checkNonce = true): void
     {
         if ($checkLoggedIn && !is_user_logged_in()) {
-            self::sendJsonError('Unauthorized request', [], self::HTTP_UNAUTHORIZED);
+            $message = $action
+                ? sprintf('Unauthorized request for action: %s', $action)
+                : 'Unauthorized request';
+            self::sendJsonError($message, [], self::HTTP_UNAUTHORIZED);
         }
 
         if ($checkNonce) {
